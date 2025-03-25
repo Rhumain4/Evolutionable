@@ -1,6 +1,6 @@
 package game.services;
 
-import game.models.Cell;
+import game.models.*;
 import game.models.enums.Biome;
 import game.models.enums.CellType;
 
@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Random;
 
 public class WorldGenerationService {
-
     private final int width;
     private final int height;
     private final long seed;
@@ -23,68 +22,110 @@ public class WorldGenerationService {
     }
 
     /**
-     * Génère une liste de cellules représentant un monde en respectant les conditions des biomes.
+     * Ajoute un village au centre de la carte (de taille 4x4).
+     */
+    Skills skills = new Skills(10, 10, 10, 10, 10, 10);
+    Needs needs = new Needs(10, 10, 10);
+    Human testHumain = new Human("Rhumain", 25, 20, skills, needs);
+    Family family = new Family(new ArrayList<>(List.of(testHumain)), "CAMACH");
+    Village village = new Village("Town", new ArrayList<>(List.of(family)));
+
+    /**
+     * Génère une liste de cellules représentant un monde en respectant les conditions des biomes, avec une disposition plus naturelle.
      *
      * @return Liste des cellules générées.
      */
     public List<Cell> generateWorld() {
         List<Cell> cells = new ArrayList<>();
-        Biome[][] biomeGrid = new Biome[width][height];
+
+        // Grille de bruit pour assigner les biomes
+        double[][] noiseGrid = generateNoiseMap(width, height);
 
         // Liste de tous les biomes disponibles
         Biome[] biomes = Biome.values();
 
-        // Génération des clusters de biomes
+        // Associer chaque cellule à un biome basé sur le bruit
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                if (biomeGrid[x][y] == null) {
-                    Biome chosenBiome = biomes[random.nextInt(biomes.length)];
-                    generateBiomeCluster(biomeGrid, x, y, chosenBiome, 10); // Crée un cluster de 10+ cellules
-                }
+                double value = noiseGrid[x][y]; // Récupérer la valeur de bruit pour cette cellule
+                Biome biome = mapValueToBiome(value, biomes); // Mapper la valeur à un biome
+                cells.add(new Cell(x, y, biome, CellType.EMPTY));
             }
         }
-
-        // Convertir la grille de biomes en liste de cellules
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                cells.add(new Cell(x, y, biomeGrid[x][y], CellType.EMPTY));
-            }
-        }
-
+        addCentralVillage(cells);
         return cells;
     }
 
     /**
-     * Génère un cluster de biomes connectés en utilisant un algorithme simple (DFS/Flood Fill).
+     * Génère une carte de bruit (noise map) pour lisser les transitions entre biomes.
      *
-     * @param biomeGrid Grille de biomes.
-     * @param startX    Coordonnée X de départ.
-     * @param startY    Coordonnée Y de départ.
-     * @param biome     Biome choisi pour le cluster.
-     * @param minSize   Taille minimale du cluster.
+     * @param width  Largeur de la carte.
+     * @param height Hauteur de la carte.
+     * @return Carte de bruit (tableau 2D).
      */
-    private void generateBiomeCluster(Biome[][] biomeGrid, int startX, int startY, Biome biome, int minSize) {
-        List<int[]> stack = new ArrayList<>();
-        stack.add(new int[]{startX, startY});
+    private double[][] generateNoiseMap(int width, int height) {
+        double[][] noiseGrid = new double[width][height];
+        double scale = 0.1; // Facteur d'échelle pour étaler les biomes
+        double persistence = 0.5; // Contrôle l'influence des couches de bruit
 
-        int clusterSize = 0;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                // Générer un bruit pseudo-aléatoire basé sur les coordonnées
+                double noise = random.nextDouble();
+                noise += persistence * smoothNoise(x * scale, y * scale); // Ajouter un effet lissé
+                noiseGrid[x][y] = noise;
+            }
+        }
 
-        while (!stack.isEmpty() && clusterSize < minSize) {
-            int[] cell = stack.remove(stack.size() - 1);
-            int x = cell[0];
-            int y = cell[1];
+        return noiseGrid;
+    }
 
-            // Vérifie si la cellule est dans les limites et non visitée
-            if (x >= 0 && x < width && y >= 0 && y < height && biomeGrid[x][y] == null) {
-                biomeGrid[x][y] = biome; // Assigne le biome à la cellule
-                clusterSize++;
+    /**
+     * Applique une fonction pour lisser les valeurs aléatoires selon les coordonnées.
+     *
+     * @param x Coordonnée X.
+     * @param y Coordonnée Y.
+     * @return Valeur lissée.
+     */
+    private double smoothNoise(double x, double y) {
+        // Exemple : Combine les valeurs voisines pour créer un effet "lissé"
+        double corners = (random.nextDouble() + random.nextDouble()) / 8.0;
+        double sides = (random.nextDouble() + random.nextDouble()) / 4.0;
+        double center = random.nextDouble() / 2.0;
+        return corners + sides + center;
+    }
 
-                // Ajoute les voisins à la pile pour continuer la propagation
-                stack.add(new int[]{x + 1, y});
-                stack.add(new int[]{x - 1, y});
-                stack.add(new int[]{x, y + 1});
-                stack.add(new int[]{x, y - 1});
+    /**
+     * Mappe une valeur de bruit (0.0 à 1.0) à un biome disponible.
+     *
+     * @param value  Valeur de bruit à mapper.
+     * @param biomes Liste des biomes disponibles.
+     * @return Biome correspondant à la valeur donnée.
+     */
+    private Biome mapValueToBiome(double value, Biome[] biomes) {
+        // Mappe la valeur continue à un intervalle des biomes
+        int index = (int) (value * biomes.length);
+        index = Math.min(index, biomes.length - 1); // Éviter les dépassements d'index
+        return biomes[index];
+    }
+
+    private void addCentralVillage(List<Cell> cells) {
+        // Coordonnées du centre
+        int centerX = width / 2;
+        int centerY = height / 2;
+
+        // Délimitations du village : 4x4 centré
+        int villageSize = 4;
+        int startX = centerX - villageSize / 2;
+        int startY = centerY - villageSize / 2;
+
+        for (Cell cell : cells) {
+            if (cell.getX() >= startX && cell.getX() < startX + villageSize &&
+                    cell.getY() >= startY && cell.getY() < startY + villageSize) {
+                // Marquer ces cellules comme faisant partie du village
+                cell.setVillage(village);
             }
         }
     }
+
 }

@@ -6,5 +6,6 @@ public enum CellType {
     WATER,
     EMPTY,
     ROCK,
-    OCCUPIED
+    OCCUPIED,
+    BUILDING,
 }

@@ -12,6 +12,8 @@ public class Cell {
     private Biome biome;
     private CellType cellType;
     private List<Entity> entities;
+    private Village village;
+
 
     // Constructor
     public Cell(int x, int y, Biome biome, CellType cellType) {
@@ -23,6 +25,14 @@ public class Cell {
     }
 
     // Getters and Setters
+    public Village getVillage() {
+        return village;
+    }
+
+    public void setVillage(Village village) {
+        this.village = village;
+    }
+
     public int getX() {
         return x;
     }
