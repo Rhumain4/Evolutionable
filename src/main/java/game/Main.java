@@ -1,6 +1,7 @@
 package game;
 
 import game.models.Cell;
+import game.models.enums.CellType;
 import game.services.WorldGenerationService;
 
 import java.util.List;
@@ -8,8 +9,8 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // Dimensions du monde
-        int width = 100; // Taille de la grille
-        int height = 100;
+        int width = 50; // Taille de la grille
+        int height = 50;
         long seed = 12345L; // Seed fixe pour des résultats reproductibles
 
         // Service de génération du monde
@@ -56,7 +57,11 @@ public class Main {
     private static String getCellRepresentation(Cell cell) {
         // Si la cellule contient un village, retourne "maison".
         if (cell.getVillage() != null) {
-            return "🏠"; // Village ou maison
+            return "\uD83C\uDFC1";
+        }
+
+        if (cell.getCellType() == CellType.BUILDING) {
+            return "🏠";
         }
 
         // Sinon, mapper le biome à un emoji

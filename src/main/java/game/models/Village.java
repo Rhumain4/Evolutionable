@@ -7,15 +7,12 @@ public class Village {
     private String name;
     private List<Family> families;
     private List<Building> buildings;
-    private List<Cell> cells;
 
     // Constructor
     public Village(String name, List<Family> families) {
         this.name = name;
         this.families = families;
         this.buildings = new ArrayList<>();
-        this.cells = new ArrayList<>();
-        ;
     }
 
     // Getters and Setters
