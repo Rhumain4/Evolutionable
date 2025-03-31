@@ -1,9 +1,9 @@
 package game.interfaces;
 
-import game.models.Cell;
-import game.models.Entity;
-import game.models.World;
+import game.models.*;
 import game.models.enums.BuildingType;
+
+import java.util.List;
 
 public interface WorldServiceInterface {
 
@@ -11,10 +11,12 @@ public interface WorldServiceInterface {
     /**
      * Builds a new village at the specified cell in the world.
      *
-     * @param world the world object where the village will be built.
-     * @param cell  the cell where the village will be constructed.
+     * @param world       the world object where the village will be built.
+     * @param cell        the cell where the village will be constructed.
+     * @param villageName the name of the village to be created.
+     * @param family      the list of families that will inhabit the new village.
      */
-    void buildVillage(World world, Cell cell);
+    void buildVillage(World world, Cell cell, String villageName, List<Family> family);
 
     /**
      * Destroys the village with the given name in the specified world.
@@ -44,10 +46,12 @@ public interface WorldServiceInterface {
      * Constructs a building of the specified type at the given cell in the world.
      *
      * @param world        the world object where the building will be constructed.
+     * @param village      the village object where the building will be constructed.
      * @param cell         the cell where the building will be built.
      * @param buildingType the type of building to be constructed.
      */
-    void buildBuilding(World world, Cell cell, BuildingType buildingType);
+
+    void buildBuilding(World world, Village village, Cell cell, BuildingType buildingType);
 
     /**
      * Destroys a building with the specified name in the world.
@@ -66,5 +70,4 @@ public interface WorldServiceInterface {
      * @param entity     the entity to be moved.
      */
     void movementEntity(World world, Cell cellStart, Cell cellTarget, Entity entity);
-
 }
