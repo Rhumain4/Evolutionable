@@ -29,4 +29,23 @@ public class World implements TimeService.TimeChangeListener {
     }
 
 
+    public TimeService getTimeService() {
+        return timeService;
+    }
+
+    public List<Village> getVillages() {
+        return villages;
+    }
+
+    public void setVillages(List<Village> villages) {
+        this.villages = villages;
+    }
+
+    public List<Cell> getCells() {
+        return cells;
+    }
+
+    public void setCells(List<Cell> cells) {
+        this.cells = cells;
+    }
 }
