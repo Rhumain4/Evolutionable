@@ -6,24 +6,27 @@ import game.models.enums.BuildingType;
 import game.models.enums.CellType;
 import game.models.factories.BuildingFactory;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WorldService implements WorldServiceInterface {
 
     @Override
     public void buildVillage(World world, Cell cell, String villageName, List<Family> family) {
+        if (world.getVillages().stream().anyMatch(v -> v.getName().equals(villageName)))
+            throw new IllegalArgumentException("There's already a village with this name: " + villageName);
+
         if (isVillageWithinDistance(cell, 10, world.getCells()))
             throw new IllegalArgumentException("There's already a village too close");
 
         if (getSquareCellTypes(cell, 3, world.getCells()).stream()
                 .map(Cell::getCellType) // Transform Cells into CellType
-                .anyMatch(type -> type == CellType.WATER || type == CellType.OCCUPIED || type == CellType.BUILDING)) {
+                .anyMatch(type -> type == CellType.WATER || type == CellType.OCCUPIED || type == CellType.BUILDING))
             throw new IllegalArgumentException("The surrounding area contains restricted cell types (Water, Occupied, or Building).");
-        }
 
         Village newVillage = new Village(villageName, family);
         cell.setVillage(newVillage);
+        buildBuilding(world, newVillage, cell, BuildingType.RESIDENTIAL);
         world.getVillages().add(newVillage);
     }
 
@@ -44,13 +47,17 @@ public class WorldService implements WorldServiceInterface {
 
     @Override
     public void buildBuilding(World world, Village village, Cell cell, BuildingType buildingType) {
-        if (getSquareCellTypes(cell, 3, world.getCells()).stream()
-                .map(Cell::getCellType) // Transform Cells into CellType
-                .anyMatch(type -> type == CellType.WATER || type == CellType.OCCUPIED || type == CellType.BUILDING)) {
+        Building building = BuildingFactory.createBuilding(buildingType);
+
+        List<Cell> locationCells = getSquareCellTypes(cell, building.getSize(), world.getCells());
+
+        boolean hasRestrictedType = locationCells.stream()
+                .map(Cell::getCellType)
+                .anyMatch(type -> type == CellType.WATER || type == CellType.OCCUPIED || type == CellType.BUILDING);
+
+        if (hasRestrictedType) {
             throw new IllegalArgumentException("The surrounding area contains restricted cell types (Water, Occupied, or Building).");
         }
-
-        Building building = BuildingFactory.createBuilding(buildingType);
 
         if (areAllCellsInVillage(cell, building.getSize(), world.getCells(), village)) {
             throw new IllegalStateException("The cell does not belong to the village.");
@@ -58,8 +65,9 @@ public class WorldService implements WorldServiceInterface {
 
         cell.getVillage().addBuilding(building);
         setCellTypesInRange(cell, building.getSize(), world.getCells(), CellType.BUILDING);
-
+        setCellVillage(cell, building.getSize() + 2, world.getCells(), village);
     }
+
 
     @Override
     public void destroyBuilding(World world, String buildingName) {
@@ -71,38 +79,47 @@ public class WorldService implements WorldServiceInterface {
 
     }
 
+    private int calculateRange(Cell c1, Cell c2) {
+        return Math.max(Math.abs(c1.getX() - c2.getX()), Math.abs(c1.getY() - c2.getY()));
+    }
+
     private boolean isVillageWithinDistance(Cell cell, int rangeTarget, List<Cell> allCells) {
-        for (Cell other : allCells) {
-            int range = Math.max(Math.abs(cell.getX() - other.getX()), Math.abs(cell.getY() - other.getY()));
-            if (range <= rangeTarget && other.getVillage() != null) return true;
-        }
-        return false;
+        return allCells.stream()
+                .filter(other -> calculateRange(cell, other) <= rangeTarget)
+                .anyMatch(other -> other.getVillage() != null);
     }
 
     private boolean areAllCellsInVillage(Cell cell, int rangeTarget, List<Cell> allCells, Village village) {
-        for (Cell other : allCells) {
-            int range = Math.max(Math.abs(cell.getX() - other.getX()), Math.abs(cell.getY() - other.getY()));
-            if (range <= rangeTarget) {
-                if (other.getVillage() == null || !other.getVillage().equals(village)) return false;
-            }
-        }
-        return true;
+        return allCells.stream()
+                .filter(other -> calculateRange(cell, other) <= rangeTarget)
+                .allMatch(other -> village.equals(other.getVillage()));
     }
 
     private void setCellTypesInRange(Cell cell, int rangeTarget, List<Cell> allCells, CellType newType) {
-        for (Cell other : allCells) {
-            int range = Math.max(Math.abs(cell.getX() - other.getX()), Math.abs(cell.getY() - other.getY()));
-            if (range > 0 && range <= rangeTarget)
-                other.setCellType(newType);
-        }
+        allCells.stream()
+                .filter(other -> {
+                    int range = calculateRange(cell, other);
+                    return range > 0 && range <= rangeTarget;
+                })
+                .forEach(other -> other.setCellType(newType));
+    }
+
+    private void setCellVillage(Cell cell, int rangeTarget, List<Cell> allCells, Village village) {
+        allCells.stream()
+                .filter(other -> {
+                    int range = calculateRange(cell, other);
+                    return range > 0 && range <= rangeTarget;
+                })
+                .forEach(other -> other.setVillage(village));
     }
 
     private List<Cell> getSquareCellTypes(Cell cell, int rangeTarget, List<Cell> allCells) {
-        List<Cell> surroundingCells = new ArrayList<>();
-        for (Cell other : allCells) {
-            int range = Math.max(Math.abs(cell.getX() - other.getX()), Math.abs(cell.getY() - other.getY()));
-            if (range > 0 && range <= rangeTarget) surroundingCells.add(other);
-        }
-        return surroundingCells;
+        return allCells.stream()
+                .filter(other -> {
+                    int range = calculateRange(cell, other);
+                    return range > 0 && range <= rangeTarget;
+                })
+                .collect(Collectors.toList());
     }
+
 }
