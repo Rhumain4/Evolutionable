@@ -26,7 +26,7 @@ public class WorldGenerationService {
      */
     Skills skills = new Skills(10, 10, 10, 10, 10, 10);
     Needs needs = new Needs(10, 10, 10);
-    Human testHumain = new Human("Rhumain", 25, 20, skills, needs);
+    Human testHumain = new Human("Rhumain", 25, 20, skills, needs, 100);
     Family family = new Family(new ArrayList<>(List.of(testHumain)), "CAMACH");
     Village village = new Village("Town", new ArrayList<>(List.of(family)));
 
