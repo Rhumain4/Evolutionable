@@ -5,13 +5,16 @@ public class Entity {
     protected int age;
     protected int healthPoints;
     protected Needs needs;
+    protected Cell position;
 
     // Constructor
-    public Entity(String name, int age, int healthPoints, Needs needs) {
+    public Entity(String name, int age, int healthPoints, Needs needs, Cell position) {
         this.name = name;
         this.age = age;
         this.healthPoints = healthPoints;
         this.needs = needs;
+        this.position = position;
+        position.getEntities().add(this);
     }
 
     // Getters and Setters
@@ -45,5 +48,21 @@ public class Entity {
 
     public void setNeeds(Needs needs) {
         this.needs = needs;
+    }
+
+    public Cell getPosition() {
+        return position;
+    }
+
+    public void setPosition(Cell position) {
+        this.position = position;
+    }
+
+    public int getHealthPoints() {
+        return healthPoints;
+    }
+
+    public void setHealthPoints(int healthPoints) {
+        this.healthPoints = healthPoints;
     }
 }

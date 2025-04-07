@@ -4,8 +4,8 @@ public class Human extends Entity {
     private Skills skills;
     private int morale;
 
-    public Human(String name, int age, int healthPoints, Skills skills, Needs needs, int morale) {
-        super(name, age, healthPoints, needs);
+    public Human(String name, int age, int healthPoints, Skills skills, Needs needs, Cell position, int morale) {
+        super(name, age, healthPoints, needs, position);
         this.skills = skills;
         this.morale = morale;
     }
@@ -18,6 +18,7 @@ public class Human extends Entity {
     public void setSkills(Skills skills) {
         this.skills = skills;
     }
+
 
     public int getMorale() {
         return morale;

@@ -9,33 +9,24 @@ import java.util.List;
 import java.util.Random;
 
 public class WorldGenerationService {
+    private World world;
     private final int width;
     private final int height;
     private final long seed;
     private final Random random;
 
-    public WorldGenerationService(int width, int height, long seed) {
+    public WorldGenerationService(int width, int height, long seed, World world) {
         this.width = width;
         this.height = height;
         this.seed = seed;
+        this.world = world;
         this.random = new Random(seed); // Générateur pseudo-aléatoire basé sur la seed
     }
 
     /**
-     * Ajoute un village au centre de la carte (de taille 4x4).
-     */
-    Skills skills = new Skills(10, 10, 10, 10, 10, 10);
-    Needs needs = new Needs(10, 10, 10);
-    Human testHumain = new Human("Rhumain", 25, 20, skills, needs, 100);
-    Family family = new Family(new ArrayList<>(List.of(testHumain)), "CAMACH");
-    Village village = new Village("Town", new ArrayList<>(List.of(family)));
-
-    /**
      * Génère une liste de cellules représentant un monde en respectant les conditions des biomes, avec une disposition plus naturelle.
-     *
-     * @return Liste des cellules générées.
      */
-    public List<Cell> generateWorld() {
+    public void generateWorld() {
         List<Cell> cells = new ArrayList<>();
 
         // Grille de bruit pour assigner les biomes
@@ -52,8 +43,9 @@ public class WorldGenerationService {
                 cells.add(new Cell(x, y, biome, CellType.EMPTY));
             }
         }
-        addCentralVillage(cells);
-        return cells;
+
+        world.setCells(cells);
+        addCentralVillage(cells, world);
     }
 
     /**
@@ -109,22 +101,25 @@ public class WorldGenerationService {
         return biomes[index];
     }
 
-    private void addCentralVillage(List<Cell> cells) {
-        // Coordonnées du centre
+    private void addCentralVillage(List<Cell> cells, World world) {
         int centerX = width / 2;
         int centerY = height / 2;
+        Cell centerCell = cells.stream()
+                .filter(c -> c.getX() == centerX && c.getY() == centerY)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Map center cell not found"));
 
-        // Délimitations du village : 4x4 centré
-        int villageSize = 4;
-        int startX = centerX - villageSize / 2;
-        int startY = centerY - villageSize / 2;
+        Skills skills = new Skills(10, 10, 10, 10, 10, 10);
+        Needs needs = new Needs(10, 10, 10);
+        Human testHumain = new Human("Rhumain", 25, 20, skills, needs, centerCell, 100);
+        Family family = new Family(new ArrayList<>(List.of(testHumain)), "CAMACH");
 
-        for (Cell cell : cells) {
-            if (cell.getX() >= startX && cell.getX() < startX + villageSize &&
-                    cell.getY() >= startY && cell.getY() < startY + villageSize) {
-                // Marquer ces cellules comme faisant partie du village
-                cell.setVillage(village);
-            }
+        WorldService worldService = new WorldService();
+
+        try {
+            worldService.buildVillage(world, centerCell, "Town", List.of(family));
+        } catch (IllegalArgumentException e) {
+            System.err.println("Erreur lors de la construction du village central : " + e.getMessage());
         }
     }
 

@@ -22,25 +22,9 @@ public interface WorldServiceInterface {
      * Destroys the village with the given name in the specified world.
      *
      * @param world       the world object where the village to be destroyed exists.
-     * @param villageName the name of the village to be destroyed.
+     * @param village     the village to be destroyed.
      */
-    void destroyVillage(World world, String villageName);
-
-    /**
-     * Removes an existing road at the specified cell in the world.
-     *
-     * @param world the world object where the road will be removed.
-     * @param cell  the cell where the road exists.
-     */
-    void destroyRoad(World world, Cell cell);
-
-    /**
-     * Builds a road at the specified cell in the world.
-     *
-     * @param world the world object where the road will be built.
-     * @param cell  the cell where the road will be constructed.
-     */
-    void buildRoad(World world, Cell cell);
+    void destroyVillage(World world, Village village);
 
     /**
      * Constructs a building of the specified type at the given cell in the world.
@@ -56,10 +40,10 @@ public interface WorldServiceInterface {
     /**
      * Destroys a building with the specified name in the world.
      *
-     * @param world        the world object where the building exists.
-     * @param buildingName the name of the building to be destroyed.
+     * @param world              the world object where the building exists.
+     * @param buildingToDestroy  the building to be destroyed.
      */
-    void destroyBuilding(World world, String buildingName);
+    void destroyBuilding(World world, Village village, Building buildingToDestroy);
 
     /**
      * Moves an entity from the starting cell to the target cell in the world.
@@ -69,5 +53,5 @@ public interface WorldServiceInterface {
      * @param cellTarget the cell where the entity will move to.
      * @param entity     the entity to be moved.
      */
-    void movementEntity(World world, Cell cellStart, Cell cellTarget, Entity entity);
+    void movementCellEntity(World world, Cell cellStart, Cell cellTarget, Entity entity);
 }

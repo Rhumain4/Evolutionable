@@ -5,7 +5,7 @@ import game.models.enums.BuildingType;
 
 public class SchoolBuilding extends Building {
     public SchoolBuilding() {
-        super("École", BuildingType.SCHOOL, 5);
+        super("École", BuildingType.SCHOOL, 2);
     }
 }
 

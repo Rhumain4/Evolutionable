@@ -1,6 +1,7 @@
 package game;
 
 import game.models.Cell;
+import game.models.World;
 import game.models.enums.CellType;
 import game.services.WorldGenerationService;
 
@@ -14,13 +15,10 @@ public class Main {
         long seed = 12345L; // Seed fixe pour des résultats reproductibles
 
         // Service de génération du monde
-        WorldGenerationService worldGenerationService = new WorldGenerationService(width, height, seed);
-
-        // Génération des cellules du monde
-        List<Cell> generatedCells = worldGenerationService.generateWorld();
+        World world = new World("test", width, height, seed);
 
         // Afficher la grille avec les biomes et les villages
-        displayGrid(generatedCells, width, height);
+        displayGrid(world.getCells(), width, height);
     }
 
     /**
@@ -55,13 +53,17 @@ public class Main {
      * @return String Emoji ou texte représentant la cellule.
      */
     private static String getCellRepresentation(Cell cell) {
-        // Si la cellule contient un village, retourne "maison".
-        if (cell.getVillage() != null) {
-            return "\uD83C\uDFC1";
+        if (!cell.getEntities().isEmpty()) {
+            return "🧑";
         }
 
         if (cell.getCellType() == CellType.BUILDING) {
             return "🏠";
+        }
+
+        // Si la cellule contient un village, retourne "maison".
+        if (cell.getVillage() != null) {
+            return "\uD83C\uDFC1";
         }
 
         // Sinon, mapper le biome à un emoji

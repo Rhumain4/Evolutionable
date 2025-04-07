@@ -12,6 +12,7 @@ public class Cell {
     private Biome biome;
     private CellType cellType;
     private List<Entity> entities;
+    private Building building;
     private Village village;
 
 
@@ -22,6 +23,7 @@ public class Cell {
         this.biome = biome;
         this.cellType = cellType;
         this.entities = new ArrayList<>();
+        this.building = null;
     }
 
     // Getters and Setters
@@ -31,6 +33,14 @@ public class Cell {
 
     public void setVillage(Village village) {
         this.village = village;
+    }
+
+    public Building getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(Building building) {
+        this.building = building;
     }
 
     public int getX() {
@@ -72,6 +82,4 @@ public class Cell {
     public void setEntities(List<Entity> entities) {
         this.entities = entities;
     }
-
-
 }

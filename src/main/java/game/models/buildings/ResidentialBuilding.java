@@ -5,7 +5,7 @@ import game.models.enums.BuildingType;
 
 public class ResidentialBuilding extends Building {
     public ResidentialBuilding() {
-        super("Maison", BuildingType.RESIDENTIAL, 3);
+        super("House", BuildingType.RESIDENTIAL, 1);
     }
 }
 

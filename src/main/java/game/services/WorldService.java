@@ -13,16 +13,19 @@ public class WorldService implements WorldServiceInterface {
 
     @Override
     public void buildVillage(World world, Cell cell, String villageName, List<Family> family) {
-        if (world.getVillages().stream().anyMatch(v -> v.getName().equals(villageName)))
+        if (world.getVillages().stream().anyMatch(v -> v.getName().equals(villageName))) {
             throw new IllegalArgumentException("There's already a village with this name: " + villageName);
+        }
 
-        if (isVillageWithinDistance(cell, 10, world.getCells()))
+        if (isVillageWithinDistance(cell, 10, world.getCells())) {
             throw new IllegalArgumentException("There's already a village too close");
+        }
 
         if (getSquareCellTypes(cell, 3, world.getCells()).stream()
                 .map(Cell::getCellType) // Transform Cells into CellType
-                .anyMatch(type -> type == CellType.WATER || type == CellType.OCCUPIED || type == CellType.BUILDING))
+                .anyMatch(type -> type == CellType.WATER || type == CellType.OCCUPIED || type == CellType.BUILDING)) {
             throw new IllegalArgumentException("The surrounding area contains restricted cell types (Water, Occupied, or Building).");
+        }
 
         Village newVillage = new Village(villageName, family);
         cell.setVillage(newVillage);
@@ -31,19 +34,15 @@ public class WorldService implements WorldServiceInterface {
     }
 
     @Override
-    public void destroyVillage(World world, String villageName) {
-
+    public void destroyVillage(World world, Village village) {
+        for (Cell cell : world.getCells()) {
+            if (cell.getVillage() == village) {
+                cell.setVillage(null);
+            }
+        }
+        world.getVillages().remove(village);
     }
 
-    @Override
-    public void destroyRoad(World world, Cell cell) {
-
-    }
-
-    @Override
-    public void buildRoad(World world, Cell cell) {
-
-    }
 
     @Override
     public void buildBuilding(World world, Village village, Cell cell, BuildingType buildingType) {
@@ -68,15 +67,33 @@ public class WorldService implements WorldServiceInterface {
         setCellVillage(cell, building.getSize() + 2, world.getCells(), village);
     }
 
-
     @Override
-    public void destroyBuilding(World world, String buildingName) {
+    public void destroyBuilding(World world, Village village, Building buildingToDestroy) {
 
+        for (Cell cell : world.getCells()) {
+            if (cell.getBuilding() == buildingToDestroy) {
+                cell.setCellType(CellType.EMPTY);
+                cell.setBuilding(null);
+                cell.setVillage(null);
+            }
+        }
+
+        village.getBuildings().remove(buildingToDestroy);
+
+        if (village.getBuildings().isEmpty()) {
+            destroyVillage(world, village);
+        }
     }
 
     @Override
-    public void movementEntity(World world, Cell cellStart, Cell cellTarget, Entity entity) {
+    public void movementCellEntity(World world, Cell cellStart, Cell cellTarget, Entity entity) {
+        if (cellTarget.getCellType() == CellType.WATER || cellTarget.getCellType() == CellType.BUILDING) {
+            throw new IllegalArgumentException("Entity cannot go through water or building.");
+        }
 
+        cellStart.getEntities().remove(entity);
+        cellTarget.getEntities().add(entity);
+        entity.setPosition(cellTarget);
     }
 
     private int calculateRange(Cell c1, Cell c2) {
