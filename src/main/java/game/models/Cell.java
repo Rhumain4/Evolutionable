@@ -41,6 +41,7 @@ public class Cell {
 
     public void setBuilding(Building building) {
         this.building = building;
+        this.setCellType(CellType.BUILDING);
     }
 
     public int getX() {

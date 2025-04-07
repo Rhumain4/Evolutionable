@@ -62,8 +62,9 @@ public class WorldService implements WorldServiceInterface {
             throw new IllegalStateException("The cell does not belong to the village.");
         }
 
+        cell.setBuilding(building);
+        setBuildingInRange(cell, building.getSize(), world.getCells(), building);
         cell.getVillage().addBuilding(building);
-        setCellTypesInRange(cell, building.getSize(), world.getCells(), CellType.BUILDING);
         setCellVillage(cell, building.getSize() + 2, world.getCells(), village);
     }
 
@@ -119,6 +120,15 @@ public class WorldService implements WorldServiceInterface {
                     return range > 0 && range <= rangeTarget;
                 })
                 .forEach(other -> other.setCellType(newType));
+    }
+
+    private void setBuildingInRange(Cell cell, int rangeTarget, List<Cell> allCells, Building building) {
+        allCells.stream()
+                .filter(other -> {
+                    int range = calculateRange(cell, other);
+                    return range > 0 && range <= rangeTarget;
+                })
+                .forEach(other -> other.setBuilding(building));
     }
 
     private void setCellVillage(Cell cell, int rangeTarget, List<Cell> allCells, Village village) {
