@@ -9,18 +9,16 @@ import java.util.List;
 import java.util.Random;
 
 public class WorldGenerationService {
-    private World world;
+    private final World world;
     private final int width;
     private final int height;
-    private final long seed;
     private final Random random;
 
     public WorldGenerationService(int width, int height, long seed, World world) {
         this.width = width;
         this.height = height;
-        this.seed = seed;
         this.world = world;
-        this.random = new Random(seed); // Générateur pseudo-aléatoire basé sur la seed
+        this.random = new Random(seed);
     }
 
     /**
@@ -57,14 +55,13 @@ public class WorldGenerationService {
      */
     private double[][] generateNoiseMap(int width, int height) {
         double[][] noiseGrid = new double[width][height];
-        double scale = 0.1; // Facteur d'échelle pour étaler les biomes
         double persistence = 0.5; // Contrôle l'influence des couches de bruit
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 // Générer un bruit pseudo-aléatoire basé sur les coordonnées
                 double noise = random.nextDouble();
-                noise += persistence * smoothNoise(x * scale, y * scale); // Ajouter un effet lissé
+                noise += persistence * smoothNoise(); // Ajouter un effet lissé
                 noiseGrid[x][y] = noise;
             }
         }
@@ -75,11 +72,9 @@ public class WorldGenerationService {
     /**
      * Applique une fonction pour lisser les valeurs aléatoires selon les coordonnées.
      *
-     * @param x Coordonnée X.
-     * @param y Coordonnée Y.
      * @return Valeur lissée.
      */
-    private double smoothNoise(double x, double y) {
+    private double smoothNoise() {
         // Exemple : Combine les valeurs voisines pour créer un effet "lissé"
         double corners = (random.nextDouble() + random.nextDouble()) / 8.0;
         double sides = (random.nextDouble() + random.nextDouble()) / 4.0;

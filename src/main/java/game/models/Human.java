@@ -19,7 +19,6 @@ public class Human extends Entity {
         this.skills = skills;
     }
 
-
     public int getMorale() {
         return morale;
     }
