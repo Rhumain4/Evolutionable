@@ -1,6 +1,6 @@
 package game.models.factories;
 
-import game.models.Building;
+import game.models.buildings.Building;
 import game.models.buildings.ResidentialBuilding;
 import game.models.buildings.SchoolBuilding;
 import game.models.buildings.TempleBuilding;

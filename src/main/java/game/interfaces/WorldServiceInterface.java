@@ -1,6 +1,7 @@
 package game.interfaces;
 
 import game.models.*;
+import game.models.buildings.Building;
 import game.models.enums.BuildingType;
 
 import java.util.List;

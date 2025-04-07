@@ -1,5 +1,6 @@
 package game.models;
 
+import game.models.buildings.Building;
 import game.models.enums.Biome;
 import game.models.enums.CellType;
 

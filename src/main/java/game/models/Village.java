@@ -1,5 +1,7 @@
 package game.models;
 
+import game.models.buildings.Building;
+
 import java.util.ArrayList;
 import java.util.List;
 

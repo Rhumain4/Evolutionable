@@ -1,11 +1,11 @@
-package game.models;
+package game.models.buildings;
 
 import game.models.enums.BuildingType;
 
 public abstract class Building {
-    private String name;
-    private BuildingType type;
-    private int size;
+    private final String name;
+    private final BuildingType type;
+    private final int size;
     private int level;
 
     // Constructor
@@ -25,16 +25,8 @@ public abstract class Building {
         return type;
     }
 
-    public void setType(BuildingType type) {
-        this.type = type;
-    }
-
     public int getSize() {
         return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
     }
 
     public int getLevel() {
@@ -43,9 +35,5 @@ public abstract class Building {
 
     public void setLevel(int level) {
         this.level = level;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }
