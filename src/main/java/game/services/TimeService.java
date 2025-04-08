@@ -86,6 +86,19 @@ public class TimeService {
         }
     }
 
+    public boolean isNightTime() {
+        return currentHour >= 19 || currentHour < 6;
+    }
+
+    public boolean isDayTime() {
+        return !isNightTime();
+    }
+
+    public String getTimeOfDay() {
+        if (isNightTime()) return "NIGHT";
+        return "DAY";
+    }
+
     // Getters pour accéder au temps actuel
     public int getCurrentDay() {
         return currentDay;

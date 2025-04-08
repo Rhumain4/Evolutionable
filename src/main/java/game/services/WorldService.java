@@ -3,9 +3,10 @@ package game.services;
 import game.interfaces.WorldServiceInterface;
 import game.models.*;
 import game.models.buildings.Building;
+import game.models.buildings.ResidentialBuilding;
 import game.models.enums.BuildingType;
 import game.models.enums.CellType;
-import game.models.factories.BuildingFactory;
+import game.utils.factories.BuildingFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ public class WorldService implements WorldServiceInterface {
 
         Village newVillage = new Village(villageName, family);
         cell.setVillage(newVillage);
-        buildBuilding(world, newVillage, cell, BuildingType.RESIDENTIAL);
+        buildBuilding(world, newVillage, cell, BuildingType.RESIDENTIAL, family.getFirst());
         world.getVillages().add(newVillage);
     }
 
@@ -46,8 +47,8 @@ public class WorldService implements WorldServiceInterface {
 
 
     @Override
-    public void buildBuilding(World world, Village village, Cell cell, BuildingType buildingType) {
-        Building building = BuildingFactory.createBuilding(buildingType);
+    public void buildBuilding(World world, Village village, Cell cell, BuildingType buildingType, Family family) {
+        Building building = BuildingFactory.createBuilding(buildingType, cell);
 
         List<Cell> locationCells = getSquareCellTypes(cell, building.getSize(), world.getCells());
 
@@ -63,8 +64,10 @@ public class WorldService implements WorldServiceInterface {
             throw new IllegalStateException("The cell does not belong to the village.");
         }
 
-        cell.setBuilding(building);
         setBuildingInRange(cell, building.getSize(), world.getCells(), building);
+        if (building instanceof ResidentialBuilding residentialBuilding) {
+            family.setResidentialBuilding(residentialBuilding);
+        }
         cell.getVillage().addBuilding(building);
         setCellVillage(cell, building.getSize() + 2, world.getCells(), village);
     }

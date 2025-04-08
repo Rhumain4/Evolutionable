@@ -36,7 +36,7 @@ public interface WorldServiceInterface {
      * @param buildingType the type of building to be constructed.
      */
 
-    void buildBuilding(World world, Village village, Cell cell, BuildingType buildingType);
+    void buildBuilding(World world, Village village, Cell cell, BuildingType buildingType, Family family);
 
     /**
      * Destroys a building with the specified name in the world.

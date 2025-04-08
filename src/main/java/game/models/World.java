@@ -30,7 +30,7 @@ public class World implements TimeService.TimeChangeListener {
         this.timeService = new TimeService();
 
         // Listener de mouvement (en premier)
-        EntityMovementService movementService = new EntityMovementService(this);
+        EntityMovementService movementService = new EntityMovementService(this, timeService);
         this.timeService.addTimeChangeListener(movementService);
 
         // Listener principal d'affichage du monde (en second)
@@ -59,6 +59,23 @@ public class World implements TimeService.TimeChangeListener {
         } catch (Exception e) {
             System.out.println("Erreur lors du nettoyage de la console");
         }
+    }
+
+    public List<Cell> getNeighbourCells(Cell cell) {
+        int x = cell.getX();
+        int y = cell.getY();
+
+        List<Cell> neighbours = new ArrayList<>();
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) continue;
+                Cell neighbour = getCellAt(x + dx, y + dy);
+                if (neighbour != null) {
+                    neighbours.add(neighbour);
+                }
+            }
+        }
+        return neighbours;
     }
 
     public Cell getCellAt(int x, int y) {
