@@ -9,10 +9,12 @@ public class EntityMovementService implements TimeService.TimeChangeListener {
     private final World world;
     private final TimeService timeService;
     private final Random random = new Random();
+    private final ResourceHarvestService resourceHarvestService;
 
-    public EntityMovementService(World world, TimeService timeService) {
+    public EntityMovementService(World world, TimeService timeService, ResourceHarvestService harvestService) {
         this.world = world;
         this.timeService = timeService;
+        this.resourceHarvestService = harvestService;
     }
 
     @Override
@@ -30,6 +32,17 @@ public class EntityMovementService implements TimeService.TimeChangeListener {
                     } else if (random.nextDouble() < 0.33) {
                         moveEntityRandomly(human, cell);
                     }
+
+                    // Tentative de récolte une fois sur deux
+                    if (cell.getResource() != null && random.nextBoolean()) {
+                        for (Entity ent : cell.getEntities()) {
+                            if (ent instanceof Human) {
+                                resourceHarvestService.doHarvest(human, cell);
+                                cell.setResource(null);
+                            }
+                        }
+                    }
+
                     movedHumans.add(human);
                 } else if (!(entity instanceof Human) && random.nextDouble() < 0.33) {
                     moveEntityRandomly(entity, cell);

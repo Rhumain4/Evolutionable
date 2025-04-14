@@ -32,7 +32,7 @@ public class WorldService implements WorldServiceInterface {
         Village newVillage = new Village(villageName, family);
         cell.setVillage(newVillage);
         buildBuilding(world, newVillage, cell, BuildingType.RESIDENTIAL, family.getFirst());
-        world.getVillages().add(newVillage);
+        world.addVillage(newVillage);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class WorldService implements WorldServiceInterface {
                 cell.setVillage(null);
             }
         }
-        world.getVillages().remove(village);
+        world.removeVillage(village);
     }
 
 

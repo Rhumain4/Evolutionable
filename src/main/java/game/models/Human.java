@@ -6,8 +6,8 @@ public class Human extends Entity {
     private Inventory inventory;
     private Family family;
 
-    public Human(String name, int age, int healthPoints, Skills skills, Needs needs, Cell position, int morale) {
-        super(name, age, healthPoints, needs, position);
+    public Human(String name, int age, int healthPoints, Skills skills, Needs needs, Cell position, int morale, int vision) {
+        super(name, age, healthPoints, needs, position, vision);
         this.skills = skills;
         this.morale = morale;
         this.family = null;

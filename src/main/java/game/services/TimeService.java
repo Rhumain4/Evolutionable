@@ -6,7 +6,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-
 public class TimeService {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final List<TimeChangeListener> listeners = new ArrayList<>();
@@ -87,7 +86,7 @@ public class TimeService {
     }
 
     public boolean isNightTime() {
-        return currentHour >= 19 || currentHour < 6;
+        return currentHour == 1;
     }
 
     public boolean isDayTime() {

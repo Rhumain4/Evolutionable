@@ -7,11 +7,19 @@ import java.util.List;
 
 public class Inventory {
     private List<Item> items;
-    private int maxWeight;
+    private double maxWeight;
 
     public Inventory(int maxWeight) {
         this.items = new ArrayList<>();
         this.maxWeight = maxWeight;
+    }
+
+    public double getWeight() {
+        double weight = 0;
+        for (Item item : items) {
+            weight += item.getWeight();
+        }
+        return weight;
     }
 
     public List<Item> getItems() {
@@ -26,7 +34,7 @@ public class Inventory {
         items.add(item);
     }
 
-    public int getMaxWeight() {
+    public double getMaxWeight() {
         return maxWeight;
     }
 

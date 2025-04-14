@@ -3,6 +3,9 @@ package game.models;
 import game.models.buildings.Building;
 import game.models.enums.Biome;
 import game.models.enums.CellType;
+import game.models.items.Log;
+import game.models.ressources.Bush;
+import game.models.ressources.HarvestableResource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,7 @@ public class Cell {
     private List<Entity> entities;
     private Building building;
     private Village village;
+    private HarvestableResource resource;
 
 
     // Constructor
@@ -25,6 +29,7 @@ public class Cell {
         this.cellType = cellType;
         this.entities = new ArrayList<>();
         this.building = null;
+        this.resource = new Bush();
     }
 
     // Getters and Setters
@@ -43,6 +48,14 @@ public class Cell {
     public void setBuilding(Building building) {
         this.building = building;
         this.setCellType(CellType.BUILDING);
+    }
+
+    public HarvestableResource getResource() {
+        return resource;
+    }
+
+    public void setResource(HarvestableResource resource) {
+        this.resource = resource;
     }
 
     public int getX() {

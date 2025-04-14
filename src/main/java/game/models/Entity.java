@@ -6,14 +6,16 @@ public class Entity {
     protected int healthPoints;
     protected Needs needs;
     protected Cell position;
+    protected int vision;
 
     // Constructor
-    public Entity(String name, int age, int healthPoints, Needs needs, Cell position) {
+    public Entity(String name, int age, int healthPoints, Needs needs, Cell position, int vision) {
         this.name = name;
         this.age = age;
         this.healthPoints = healthPoints;
         this.needs = needs;
         this.position = position;
+        this.vision = vision;
         position.getEntities().add(this);
     }
 

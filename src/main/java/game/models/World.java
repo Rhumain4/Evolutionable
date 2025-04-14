@@ -1,6 +1,7 @@
 package game.models;
 
 import game.services.EntityMovementService;
+import game.services.ResourceHarvestService;
 import game.services.TimeService;
 import game.services.WorldGenerationService;
 import game.utils.WorldDisplayer;
@@ -29,8 +30,10 @@ public class World implements TimeService.TimeChangeListener {
         // TimeService
         this.timeService = new TimeService();
 
+        ResourceHarvestService harvestService = new ResourceHarvestService();
+
         // Listener de mouvement (en premier)
-        EntityMovementService movementService = new EntityMovementService(this, timeService);
+        EntityMovementService movementService = new EntityMovementService(this, timeService, harvestService);
         this.timeService.addTimeChangeListener(movementService);
 
         // Listener principal d'affichage du monde (en second)
@@ -92,6 +95,14 @@ public class World implements TimeService.TimeChangeListener {
 
     public List<Village> getVillages() {
         return villages;
+    }
+
+    public void addVillage(Village village) {
+        villages.add(village);
+    }
+
+    public void removeVillage(Village village) {
+        villages.remove(village);
     }
 
     public void setVillages(List<Village> villages) {

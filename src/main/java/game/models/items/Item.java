@@ -4,10 +4,10 @@ import game.models.Inventory;
 
 public abstract class Item {
     private final String name;
-    private final int weight;
+    private final double weight;
     private Inventory inventory;
 
-    public Item(String name, int weight) {
+    protected Item(String name, double weight) {
         this.name = name;
         this.weight = weight;
         this.inventory = null;
@@ -17,7 +17,7 @@ public abstract class Item {
         return name;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
