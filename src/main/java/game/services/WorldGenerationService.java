@@ -3,6 +3,7 @@ package game.services;
 import game.models.*;
 import game.models.enums.Biome;
 import game.models.enums.CellType;
+import game.models.enums.Gender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,8 +106,7 @@ public class WorldGenerationService {
                 .orElseThrow(() -> new IllegalStateException("Map center cell not found"));
 
         Skills skills = new Skills(10, 10, 10, 10, 10, 10);
-        Needs needs = new Needs(10, 10, 10);
-        Human testHumain = new Human("Rhumain", 25, 20, skills, needs, centerCell, 100, 10);
+        Human testHumain = new Human("Rhumain", 25, 20, skills, new Needs(), centerCell, 100, 10, Gender.MALE, Gender.FEMALE);
         Family family = new Family(new ArrayList<>(List.of(testHumain)), "CAMACH", null);
 
         WorldService worldService = new WorldService();

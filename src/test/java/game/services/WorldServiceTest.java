@@ -16,10 +16,6 @@ class WorldServiceTest {
 
     @BeforeEach
     void setUp() {
-        WorldService worldService = new WorldService();
-        Cell cell1 = new Cell(0, 0, Biome.PLAINS, CellType.OCCUPIED);
-        Cell cell2 = new Cell(0, 1, Biome.PLAINS, CellType.EMPTY);
-        Needs needs = new Needs(100, 100, 100);
     }
 
     @Test

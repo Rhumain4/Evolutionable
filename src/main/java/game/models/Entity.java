@@ -1,5 +1,8 @@
 package game.models;
 
+import game.models.enums.Diet;
+import game.models.enums.Gender;
+
 public class Entity {
     protected String name;
     protected int age;
@@ -7,16 +10,33 @@ public class Entity {
     protected Needs needs;
     protected Cell position;
     protected int vision;
+    protected Gender gender;
+    protected Diet diet;
 
     // Constructor
-    public Entity(String name, int age, int healthPoints, Needs needs, Cell position, int vision) {
+    public Entity(String name, int age, int healthPoints, Needs needs, Cell position, int vision, Gender gender) {
         this.name = name;
         this.age = age;
         this.healthPoints = healthPoints;
         this.needs = needs;
         this.position = position;
         this.vision = vision;
+        this.gender = gender;
         position.getEntities().add(this);
+    }
+
+    public void updateNeeds(int currentHour) {
+        // Exemple simple : décrément progressif
+        this.needs.decreaseHunger(1);
+        this.needs.decreaseThirst(2);
+        this.needs.decreaseRest(1);
+
+        // Simulation du besoin de sommeil la nuit
+        if (currentHour >= 22 || currentHour <= 6) {
+            this.needs.decreaseSleep(2);
+        } else {
+            this.needs.decreaseSleep(1);
+        }
     }
 
     // Getters and Setters
@@ -26,6 +46,22 @@ public class Entity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getVision() {
+        return vision;
+    }
+
+    public void setVision(int vision) {
+        this.vision = vision;
+    }
+
+    public Gender getSexe() {
+        return gender;
+    }
+
+    public void setSexe(Gender gender) {
+        this.gender = gender;
     }
 
     public int getAge() {

@@ -23,9 +23,9 @@ public class EntityMovementService implements TimeService.TimeChangeListener {
         boolean isNight = timeService.isNightTime();
 
         for (Cell cell : world.getCells()) {
-            List<Entity> entitiesToMove = new ArrayList<>(cell.getEntities());
+            List<Entity> entitiesToAction = new ArrayList<>(cell.getEntities());
 
-            for (Entity entity : entitiesToMove) {
+            for (Entity entity : entitiesToAction) {
                 if (entity instanceof Human human && !movedHumans.contains(human)) {
                     if (isNight) {
                         moveHumanHome(human, cell);
@@ -47,6 +47,9 @@ public class EntityMovementService implements TimeService.TimeChangeListener {
                 } else if (!(entity instanceof Human) && random.nextDouble() < 0.33) {
                     moveEntityRandomly(entity, cell);
                 }
+
+                entity.updateNeeds(currentHour);
+
             }
         }
     }

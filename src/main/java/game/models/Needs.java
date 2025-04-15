@@ -4,13 +4,32 @@ public class Needs {
     private int hunger;
     private int thirst;
     private int rest;
+    private int sleep;
 
     // Constructor
-    public Needs(int hunger, int thirst, int rest) {
-        this.hunger = hunger;
-        this.thirst = thirst;
-        this.rest = rest;
+    public Needs() {
+        this.hunger = 100;
+        this.thirst = 100;
+        this.rest = 100;
+        this.sleep = 100;
     }
+
+    public void decreaseHunger(int amount) {
+        hunger = Math.max(0, hunger - amount);
+    }
+
+    public void decreaseThirst(int amount) {
+        thirst = Math.max(0, thirst - amount);
+    }
+
+    public void decreaseRest(int amount) {
+        rest = Math.max(0, rest - amount);
+    }
+
+    public void decreaseSleep(int amount) {
+        sleep = Math.max(0, sleep - amount);
+    }
+
 
     // Getters and Setters
     public int getHunger() {
@@ -19,6 +38,14 @@ public class Needs {
 
     public void setHunger(int hunger) {
         this.hunger = hunger;
+    }
+
+    public int getSleep() {
+        return sleep;
+    }
+
+    public void setSleep(int sleep) {
+        this.sleep = sleep;
     }
 
     public int getThirst() {

@@ -1,14 +1,18 @@
 package game.models;
 
+import game.models.enums.Gender;
+
 public class Human extends Entity {
     private Skills skills;
     private int morale;
     private Inventory inventory;
     private Family family;
+    private Gender sexualPreference;
 
-    public Human(String name, int age, int healthPoints, Skills skills, Needs needs, Cell position, int morale, int vision) {
-        super(name, age, healthPoints, needs, position, vision);
+    public Human(String name, int age, int healthPoints, Skills skills, Needs needs, Cell position, int morale, int vision, Gender gender, Gender sexualPreference) {
+        super(name, age, healthPoints, needs, position, vision, gender);
         this.skills = skills;
+        this.sexualPreference = sexualPreference;
         this.morale = morale;
         this.family = null;
         this.inventory = new Inventory(skills.getStrength() + skills.getEndurance());
