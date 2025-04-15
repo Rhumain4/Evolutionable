@@ -3,6 +3,8 @@ package game.models;
 import game.models.enums.Diet;
 import game.models.enums.Gender;
 
+import java.util.List;
+
 public class Entity {
     protected String name;
     protected int age;
@@ -12,6 +14,7 @@ public class Entity {
     protected int vision;
     protected Gender gender;
     protected Diet diet;
+    protected List<Task> task;
 
     // Constructor
     public Entity(String name, int age, int healthPoints, Needs needs, Cell position, int vision, Gender gender) {
