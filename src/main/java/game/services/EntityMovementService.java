@@ -1,100 +1,37 @@
 package game.services;
 
-import game.models.*;
+import game.models.Cell;
+import game.models.Entity;
+import game.models.Human;
+import game.models.World;
 import game.models.enums.CellType;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
-public class EntityMovementService implements TimeService.TimeChangeListener {
+public class EntityMovementService {
     private final World world;
-    private final TimeService timeService;
-    private final Random random = new Random();
-    private final ResourceHarvestService resourceHarvestService;
 
-    public EntityMovementService(World world, TimeService timeService, ResourceHarvestService harvestService) {
+    public EntityMovementService(World world) {
         this.world = world;
-        this.timeService = timeService;
-        this.resourceHarvestService = harvestService;
     }
 
-    @Override
-    public void onTimeChange(int currentDay, int currentHour, int currentMinute) {
-        Set<Human> movedHumans = new HashSet<>();
-        boolean isNight = timeService.isNightTime();
-
-        for (Cell cell : world.getCells()) {
-            List<Entity> entitiesToAction = new ArrayList<>(cell.getEntities());
-
-            for (Entity entity : entitiesToAction) {
-                if (entity instanceof Human human && !movedHumans.contains(human)) {
-                    if (isNight) {
-                        moveHumanHome(human, cell);
-                    } else if (random.nextDouble() < 0.33) {
-                        moveEntityRandomly(human, cell);
-                    }
-
-                    // Tentative de récolte une fois sur deux
-                    if (cell.getResource() != null && random.nextBoolean()) {
-                        for (Entity ent : cell.getEntities()) {
-                            if (ent instanceof Human) {
-                                resourceHarvestService.doHarvest(human, cell);
-                                cell.setResource(null);
-                            }
-                        }
-                    }
-
-                    movedHumans.add(human);
-                } else if (!(entity instanceof Human) && random.nextDouble() < 0.33) {
-                    moveEntityRandomly(entity, cell);
-                }
-
-                entity.updateNeeds(currentHour);
-
-            }
-        }
-    }
-
-
-    private void moveHumanHome(Human human, Cell currentCell) {
+    public void moveHumanHome(Human human) {
+        Cell currentCell = human.getPosition();
         Cell homeCell = human.getFamily().getResidentialBuilding().getCenterPosition();
 
-        if (homeCell == null || currentCell == homeCell) {
-            return; // Déjà à la maison ou maison inconnue
-        }
+        if (homeCell == null || currentCell == homeCell) return;
 
-        int currentX = currentCell.getX();
-        int currentY = currentCell.getY();
-        int targetX = homeCell.getX();
-        int targetY = homeCell.getY();
+        int dx = Integer.compare(homeCell.getX(), currentCell.getX());
+        int dy = Integer.compare(homeCell.getY(), currentCell.getY());
 
-        int dx = Integer.compare(targetX, currentX);
-        int dy = Integer.compare(targetY, currentY);
-
-        // Essaye d'abord diagonale
-        if (tryMoveTo(human, currentCell, currentX + dx, currentY + dy)) return;
-
-        // Sinon horizontal seulement
-        if (dx != 0 && tryMoveTo(human, currentCell, currentX + dx, currentY)) return;
-
-        // Sinon vertical seulement
-        if (dy != 0) {
-            tryMoveTo(human, currentCell, currentX, currentY + dy);
-        }
+        if (tryMoveTo(human, currentCell, currentCell.getX() + dx, currentCell.getY() + dy)) return;
+        if (dx != 0 && tryMoveTo(human, currentCell, currentCell.getX() + dx, currentCell.getY())) return;
+        if (dy != 0) tryMoveTo(human, currentCell, currentCell.getX(), currentCell.getY() + dy);
     }
 
-    private boolean tryMoveTo(Human human, Cell currentCell, int x, int y) {
-        Cell nextCell = world.getCellAt(x, y);
-        if (nextCell != null && nextCell.getCellType() != CellType.WATER) {
-            currentCell.getEntities().remove(human);
-            nextCell.getEntities().add(human);
-            human.setPosition(nextCell);
-            return true;
-        }
-        return false;
-    }
-
-
-    private void moveEntityRandomly(Entity entity, Cell currentCell) {
+    public void moveRandomly(Entity entity) {
+        Cell currentCell = entity.getPosition();
         List<Cell> neighbours = world.getNeighbourCells(currentCell);
         Collections.shuffle(neighbours);
 
@@ -107,4 +44,16 @@ public class EntityMovementService implements TimeService.TimeChangeListener {
             }
         }
     }
+
+    private boolean tryMoveTo(Entity entity, Cell from, int x, int y) {
+        Cell to = world.getCellAt(x, y);
+        if (to != null && to.getCellType() != CellType.WATER) {
+            from.getEntities().remove(entity);
+            to.getEntities().add(entity);
+            entity.setPosition(to);
+            return true;
+        }
+        return false;
+    }
 }
+

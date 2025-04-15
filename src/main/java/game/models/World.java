@@ -1,6 +1,6 @@
 package game.models;
 
-import game.services.EntityMovementService;
+import game.services.EntityActionService;
 import game.services.ResourceHarvestService;
 import game.services.TimeService;
 import game.services.WorldGenerationService;
@@ -33,7 +33,7 @@ public class World implements TimeService.TimeChangeListener {
         ResourceHarvestService harvestService = new ResourceHarvestService();
 
         // Listener de mouvement (en premier)
-        EntityMovementService movementService = new EntityMovementService(this, timeService, harvestService);
+        EntityActionService movementService = new EntityActionService(this, timeService, harvestService);
         this.timeService.addTimeChangeListener(movementService);
 
         // Listener principal d'affichage du monde (en second)
