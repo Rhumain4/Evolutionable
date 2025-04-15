@@ -1,7 +1,6 @@
 package game.services;
 
 import game.models.*;
-import game.models.enums.CellType;
 
 import java.util.*;
 

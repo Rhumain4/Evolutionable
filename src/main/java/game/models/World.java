@@ -1,9 +1,6 @@
 package game.models;
 
-import game.services.EntityActionService;
-import game.services.ResourceHarvestService;
-import game.services.TimeService;
-import game.services.WorldGenerationService;
+import game.services.*;
 import game.utils.WorldDisplayer;
 
 import java.util.ArrayList;
@@ -31,9 +28,10 @@ public class World implements TimeService.TimeChangeListener {
         this.timeService = new TimeService();
 
         ResourceHarvestService harvestService = new ResourceHarvestService();
+        EntityMovementService entityMovementService = new EntityMovementService(this);
 
         // Listener de mouvement (en premier)
-        EntityActionService movementService = new EntityActionService(this, timeService, harvestService);
+        EntityActionService movementService = new EntityActionService(this, timeService, harvestService, entityMovementService);
         this.timeService.addTimeChangeListener(movementService);
 
         // Listener principal d'affichage du monde (en second)
