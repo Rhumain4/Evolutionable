@@ -2,8 +2,12 @@ package game.models;
 
 import game.models.enums.Diet;
 import game.models.enums.Gender;
+import game.models.enums.StateEnum;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class Entity {
     protected String name;
@@ -17,7 +21,7 @@ public class Entity {
     protected List<Task> task;
 
     // Constructor
-    public Entity(String name, int age, int healthPoints, Needs needs, Cell position, int vision, Gender gender) {
+    public Entity(String name, int age, int healthPoints, Needs needs, Cell position, int vision, Gender gender, Diet diet) {
         this.name = name;
         this.age = age;
         this.healthPoints = healthPoints;
@@ -25,7 +29,20 @@ public class Entity {
         this.position = position;
         this.vision = vision;
         this.gender = gender;
+        this.diet = diet;
+        this.task = new ArrayList<>();
         position.getEntities().add(this);
+    }
+
+    public void addTask(Task newTask) {
+        task.removeIf(t -> t.getTask() == newTask.getTask());
+        task.add(newTask);
+        task.sort(Comparator.comparingInt(Task::getPriority).reversed());
+    }
+
+
+    public Optional<Task> getCurrentTask() {
+        return task.stream().filter(t -> t.getState() != StateEnum.FINISHED).findFirst();
     }
 
     public void updateNeeds(int currentHour) {
@@ -75,11 +92,11 @@ public class Entity {
         this.age = age;
     }
 
-    public int gethealthPoints() {
+    public int getHealthPoints() {
         return healthPoints;
     }
 
-    public void sethealthPoints(int healthPoints) {
+    public void setHealthPoints(int healthPoints) {
         this.healthPoints = healthPoints;
     }
 
@@ -97,13 +114,5 @@ public class Entity {
 
     public void setPosition(Cell position) {
         this.position = position;
-    }
-
-    public int getHealthPoints() {
-        return healthPoints;
-    }
-
-    public void setHealthPoints(int healthPoints) {
-        this.healthPoints = healthPoints;
     }
 }

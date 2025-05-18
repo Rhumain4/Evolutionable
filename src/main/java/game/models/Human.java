@@ -1,5 +1,6 @@
 package game.models;
 
+import game.models.enums.Diet;
 import game.models.enums.Gender;
 
 public class Human extends Entity {
@@ -9,8 +10,8 @@ public class Human extends Entity {
     private Family family;
     private Gender sexualPreference;
 
-    public Human(String name, int age, int healthPoints, Skills skills, Needs needs, Cell position, int morale, int vision, Gender gender, Gender sexualPreference) {
-        super(name, age, healthPoints, needs, position, vision, gender);
+    public Human(String name, int age, int healthPoints, Skills skills, Needs needs, Cell position, int morale, int vision, Diet diet, Gender gender, Gender sexualPreference) {
+        super(name, age, healthPoints, needs, position, vision, gender, diet);
         this.skills = skills;
         this.sexualPreference = sexualPreference;
         this.morale = morale;
@@ -19,6 +20,11 @@ public class Human extends Entity {
     }
 
     // Getters-Setters
+
+    public Gender getSexualPreference() {
+        return sexualPreference;
+    }
+
     public Skills getSkills() {
         return skills;
     }
